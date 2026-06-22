@@ -14,17 +14,19 @@ const INTERVALS = [
 
 interface SidebarProps {
   activeInterval: number
-  onIntervalChange: (seconds: number) => void
+  isTVMode: boolean
+  onIntervalChange: (val: number) => void
   onRefresh: () => void
-  onOpenPhotos: () => void
+  onToggleTVMode: () => void
   onOpenSettings: () => void
 }
 
 export function Sidebar({
   activeInterval,
+  isTVMode,
   onIntervalChange,
   onRefresh,
-  onOpenPhotos,
+  onToggleTVMode,
   onOpenSettings,
 }: SidebarProps) {
   const [isFullscreen, setIsFullscreen] = useState(false)
@@ -73,7 +75,7 @@ export function Sidebar({
         whileTap={{ scale: 0.9 }}
         title={isFullscreen ? 'Sair da Tela Cheia' : 'Tela Cheia'}
       >
-        {isFullscreen ? '⛶' : '📺'}
+        {isFullscreen ? '⛶' : '⛶'}
       </motion.button>
 
       <motion.button
@@ -97,13 +99,13 @@ export function Sidebar({
       </motion.button>
 
       <motion.button
-        className="sidebar-icon-btn"
-        onClick={onOpenPhotos}
+        className={`sidebar-icon-btn ${isTVMode ? 'active' : ''}`}
+        onClick={onToggleTVMode}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
-        title="Fotos dos vendedores"
+        title="Modo TV"
       >
-        🖼
+        📺
       </motion.button>
 
       <motion.button

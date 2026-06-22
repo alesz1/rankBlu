@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import type { Seller } from '../types'
 import { formatCurrency, getPercentage } from '../data'
+import { getAvatarUrl } from '../utils/format'
 
 const BADGES = ['🥇', '🥈', '🥉']
 
@@ -21,6 +22,15 @@ export function LeaderboardCard({
 }: LeaderboardCardProps) {
   const pct = getPercentage(seller)
   const topClass = rank <= 3 ? `top-${rank}` : ''
+
+  let evolutionIcon = <span className="evo-equal" title="Manteve posição">=</span>
+  if (seller.previousRank != null) {
+    if (seller.previousRank > rank) {
+      evolutionIcon = <span className="evo-up" title={`Subiu ${seller.previousRank - rank} posições`}>↑</span>
+    } else if (seller.previousRank < rank) {
+      evolutionIcon = <span className="evo-down" title={`Caiu ${rank - seller.previousRank} posições`}>↓</span>
+    }
+  }
 
   return (
     <motion.div
@@ -48,7 +58,20 @@ export function LeaderboardCard({
         <span className="rank-number">{rank}</span>
       )}
 
-      <img src={seller.avatar} alt={seller.name} className="card-avatar" />
+      <div className="card-avatar-wrap">
+        <img 
+          src={seller.avatar} 
+          alt={seller.name} 
+          className="card-avatar"
+          onError={(e) => {
+            e.currentTarget.onerror = null; // Previne loop
+            e.currentTarget.src = getAvatarUrl(seller.name)
+          }}
+        />
+        <div className="evolution-indicator">
+          {evolutionIcon}
+        </div>
+      </div>
 
       <div className="card-info">
         <div className="card-name">{seller.name}</div>

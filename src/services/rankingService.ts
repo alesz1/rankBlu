@@ -1,12 +1,11 @@
 import { getSupabase } from '../lib/supabase'
-import type { Seller } from '../types'
-import { getAvatarUrl } from '../utils/format'
+import type { Seller, HighlightsData } from '../types'
+import { slugify } from '../utils/format'
 import { isPaidStatus } from '../utils/paidStatus'
 
 interface VendedorRow {
   id: string
   nome: string
-  foto: string | null
 }
 
 interface PropostaRow {
@@ -15,12 +14,12 @@ interface PropostaRow {
   status: string | null
 }
 
-export async function loadSellersFromSupabase(): Promise<Seller[]> {
+export async function loadSellersFromSupabase(): Promise<{ sellers: Seller[], highlights: HighlightsData }> {
   const supabase = getSupabase()
 
   const [{ data: vendedores, error: vendedoresError }, { data: propostas, error: propostasError }] =
     await Promise.all([
-      supabase.from('vendedores').select('id, nome, foto'),
+      supabase.from('vendedores').select('id, nome'),
       supabase.from('propostas').select('vendedor_id, valor, status'),
     ])
 
@@ -39,9 +38,26 @@ export async function loadSellersFromSupabase(): Promise<Seller[]> {
   }
 
   const stats = new Map<string, { paidProposals: number; totalValue: number }>()
+  const sellerNames = new Map<string, string>()
+  
+  // Mapeia nomes para facilitar as estatísticas de Highlights
+  for (const v of (vendedores ?? []) as VendedorRow[]) {
+    sellerNames.set(v.id, v.nome)
+  }
+
+  let biggestSaleValue = 0
+  let biggestSaleSellerId = ''
 
   for (const proposta of (propostas ?? []) as PropostaRow[]) {
     if (!proposta.vendedor_id || !isPaidStatus(proposta.status)) continue
+
+    const valor = Number(proposta.valor ?? 0)
+    
+    // Calcula maior venda individual
+    if (valor > biggestSaleValue) {
+      biggestSaleValue = valor
+      biggestSaleSellerId = proposta.vendedor_id
+    }
 
     const current = stats.get(proposta.vendedor_id) ?? {
       paidProposals: 0,
@@ -49,7 +65,7 @@ export async function loadSellersFromSupabase(): Promise<Seller[]> {
     }
 
     current.paidProposals += 1
-    current.totalValue += Number(proposta.valor ?? 0)
+    current.totalValue += valor
     stats.set(proposta.vendedor_id, current)
   }
 
@@ -60,10 +76,13 @@ export async function loadSellersFromSupabase(): Promise<Seller[]> {
         totalValue: 0,
       }
 
+      // Usa foto local normalizada. Se falhar, o React fará fallback no <img onError={...} />
+      const localAvatar = `/fotos-vendedores/${slugify(vendedor.nome)}.jpg`
+
       return {
         id: vendedor.id,
         name: vendedor.nome,
-        avatar: vendedor.foto || getAvatarUrl(vendedor.nome),
+        avatar: localAvatar,
         paidProposals: sellerStats.paidProposals,
         totalValue: sellerStats.totalValue,
         goalValue: 1,
@@ -78,8 +97,41 @@ export async function loadSellersFromSupabase(): Promise<Seller[]> {
 
   const topValue = Math.max(...ranked.map((seller) => seller.totalValue), 1)
 
-  return ranked.map((seller) => ({
+  const sellers = ranked.map((seller) => ({
     ...seller,
     goalValue: topValue,
   }))
+
+  // Calcula highlights
+  let mostProposalsValue = 0
+  let mostProposalsSellerId = ''
+  let bestSellerValue = 0
+  let bestSellerId = ''
+  let totalValueAll = 0
+
+  for (const [vendedorId, sellerStats] of stats.entries()) {
+    if (sellerStats.paidProposals > mostProposalsValue) {
+      mostProposalsValue = sellerStats.paidProposals
+      mostProposalsSellerId = vendedorId
+    }
+    if (sellerStats.totalValue > bestSellerValue) {
+      bestSellerValue = sellerStats.totalValue
+      bestSellerId = vendedorId
+    }
+    totalValueAll += sellerStats.totalValue
+  }
+
+  const averagePerSeller = sellers.length > 0 ? totalValueAll / sellers.length : 0
+
+  const highlights: HighlightsData = {
+    biggestSaleValue,
+    biggestSaleSellerName: sellerNames.get(biggestSaleSellerId) ?? 'Desconhecido',
+    mostProposalsValue,
+    mostProposalsSellerName: sellerNames.get(mostProposalsSellerId) ?? 'Desconhecido',
+    bestSellerValue,
+    bestSellerName: sellerNames.get(bestSellerId) ?? 'Desconhecido',
+    averagePerSeller,
+  }
+
+  return { sellers, highlights }
 }

@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import type { Seller } from '../types'
 import { formatCurrency, getPercentage } from '../data'
+import { getAvatarUrl } from '../utils/format'
 
 const MEDALS = ['🥇', '🥈', '🥉']
 const SHIELD_CLASS = ['gold', 'silver', 'bronze'] as const
@@ -93,6 +94,10 @@ export function Podium({ top3, showPercentage, showScore }: PodiumProps) {
                   src={seller.avatar}
                   alt={seller.name}
                   className={`podium-avatar-hero ${shield}`}
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = getAvatarUrl(seller.name)
+                  }}
                 />
               </div>
 
