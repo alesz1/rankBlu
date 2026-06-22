@@ -1,8 +1,3 @@
-// Base64 audio string for a subtle 'ding' sound
-const DING_SOUND = 'data:audio/mp3;base64,//NExAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq//NExAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq'
-// Note: For a real ding sound, we should use a proper base64 encoded MP3 or WAV.
-// Because generating a full audio file in base64 here without external resources is tricky,
-// we will use a small beep synthesized via the Web Audio API instead, which is more reliable.
 
 export function playRankChangeSound() {
   try {
