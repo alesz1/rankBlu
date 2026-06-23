@@ -117,6 +117,8 @@
   width: 100%;
   padding: 24px;
   overflow: hidden;
+  flex: 1;
+  min-height: 0;
 }
 
 .dashboard-content {
@@ -124,15 +126,13 @@
   gap: 24px;
   flex: 1;
   overflow: hidden;
-  align-items: center;
-  justify-content: center;
+  min-height: 0;
 }
 
 .ranking-col {
   flex: 1;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  gap: 16px;
   overflow: hidden;
 }
 
