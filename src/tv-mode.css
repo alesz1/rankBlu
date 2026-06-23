@@ -124,11 +124,15 @@
   gap: 24px;
   flex: 1;
   overflow: hidden;
+  align-items: center;
+  justify-content: center;
 }
 
 .ranking-col {
   flex: 1;
   display: flex;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
 }
 
