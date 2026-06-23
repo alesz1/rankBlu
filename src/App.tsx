@@ -7,6 +7,7 @@ import { MoneyRain } from './components/MoneyRain'
 import { HighlightsPanel } from './components/HighlightsPanel'
 import { SettingsModal } from './components/SettingsModal'
 import { CsvImportModal } from './components/CsvImportModal'
+import { AnimatedBackground } from './components/AnimatedBackground'
 import { Sidebar } from './components/Sidebar'
 import { loadSellersFromSupabase } from './data'
 import { isSupabaseConfigured } from './lib/supabase'
@@ -141,6 +142,8 @@ export default function App() {
 
   return (
     <div className={`app ${isTVMode ? 'tv-mode' : ''}`}>
+      <AnimatedBackground />
+      
       {!isTVMode && (
         <header className="header">
           <div className="header-left">
