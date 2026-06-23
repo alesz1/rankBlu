@@ -4,9 +4,7 @@ import confetti from 'canvas-confetti'
 import { Podium } from './components/Podium'
 import { LeaderboardCard } from './components/LeaderboardCard'
 import { MoneyRain } from './components/MoneyRain'
-import { SummaryCards } from './components/SummaryCards'
 import { HighlightsPanel } from './components/HighlightsPanel'
-import { ProgressBar } from './components/ProgressBar'
 import { SettingsModal } from './components/SettingsModal'
 import { Sidebar } from './components/Sidebar'
 import { loadSellersFromSupabase } from './data'
@@ -17,7 +15,6 @@ import type { Seller, HighlightsData } from './types'
 
 const CIRCLE_R = 22
 const CIRCUMFERENCE = 2 * Math.PI * CIRCLE_R
-const META_GERAL = 1000000
 
 export default function App() {
   const [sellers, setSellers] = useState<Seller[]>([])
@@ -139,7 +136,6 @@ export default function App() {
   const top3 = sellers.slice(0, 3)
   const rest = sellers
   const progress = ((interval - countdown) / interval) * CIRCUMFERENCE
-  const totalValueGeral = sellers.reduce((acc, curr) => acc + curr.totalValue, 0)
 
   return (
     <div className={`app ${isTVMode ? 'tv-mode' : ''}`}>
@@ -190,10 +186,6 @@ export default function App() {
           <div className="state-message error">{error}</div>
         ) : (
           <div className="dashboard-layout">
-            <SummaryCards sellers={sellers} highlights={highlights} />
-            
-            <ProgressBar total={totalValueGeral} goal={META_GERAL} />
-
             <div className="dashboard-content">
               <div className="ranking-col">
                 <Podium
