@@ -148,7 +148,7 @@ export default function App() {
         <header className="header">
           <div className="header-left">
             <div className="ranking-name">
-              Nome do Ranking: <strong>SouBlu · Propostas Pagas</strong>
+              Nome do Ranking: <strong>Rank Blu Promotora</strong>
             </div>
           </div>
 
