@@ -6,6 +6,7 @@ import { LeaderboardCard } from './components/LeaderboardCard'
 import { MoneyRain } from './components/MoneyRain'
 import { HighlightsPanel } from './components/HighlightsPanel'
 import { SettingsModal } from './components/SettingsModal'
+import { CsvImportModal } from './components/CsvImportModal'
 import { Sidebar } from './components/Sidebar'
 import { loadSellersFromSupabase } from './data'
 import { isSupabaseConfigured } from './lib/supabase'
@@ -29,6 +30,7 @@ export default function App() {
   const [playing, setPlaying] = useState(true)
   const [key, setKey] = useState(0)
   const [settingsOpen, setSettingsOpen] = useState(false)
+  const [csvOpen, setCsvOpen] = useState(false)
   const [isTVMode, setIsTVMode] = useState(false)
   
   const prevSellersRef = useRef<string[]>([])
@@ -225,6 +227,7 @@ export default function App() {
             onIntervalChange={setInterval_}
             onRefresh={() => void refresh()}
             onToggleTVMode={toggleTVMode}
+            onOpenCsv={() => setCsvOpen(true)}
             onOpenSettings={() => setSettingsOpen(true)}
           />
         )}
@@ -240,6 +243,12 @@ export default function App() {
       <SettingsModal
         open={settingsOpen}
         onClose={() => setSettingsOpen(false)}
+      />
+
+      <CsvImportModal 
+        open={csvOpen} 
+        onClose={() => setCsvOpen(false)} 
+        onImportComplete={() => void loadData()} 
       />
 
       <MoneyRain />

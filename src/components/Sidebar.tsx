@@ -18,6 +18,7 @@ interface SidebarProps {
   onIntervalChange: (val: number) => void
   onRefresh: () => void
   onToggleTVMode: () => void
+  onOpenCsv: () => void
   onOpenSettings: () => void
 }
 
@@ -27,6 +28,7 @@ export function Sidebar({
   onIntervalChange,
   onRefresh,
   onToggleTVMode,
+  onOpenCsv,
   onOpenSettings,
 }: SidebarProps) {
   const [isFullscreen, setIsFullscreen] = useState(false)
@@ -106,6 +108,16 @@ export function Sidebar({
         title="Modo TV"
       >
         📺
+      </motion.button>
+
+      <motion.button
+        className="sidebar-icon-btn"
+        onClick={onOpenCsv}
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+        title="Importar CSV"
+      >
+        📁
       </motion.button>
 
       <motion.button
